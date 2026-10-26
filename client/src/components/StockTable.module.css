@@ -1,0 +1,25 @@
+.company {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.price {
+  font-weight: 700;
+  transition: background-color 0.4s ease;
+}
+
+.up {
+  color: var(--positive);
+  background: var(--positive-bg);
+}
+
+.down {
+  color: var(--negative);
+  background: var(--negative-bg);
+}
+
+.arrow {
+  margin-left: var(--space-1);
+  font-size: 0.7em;
+}

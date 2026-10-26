@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# environment
+.env
+.env.*
+!.env.example
+
+# build output
+dist/
+build/
+coverage/
+
+# logs
+logs/
+*.log
+npm-debug.log*
+
+# database dumps
+*.sql.gz
+*.dump
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/

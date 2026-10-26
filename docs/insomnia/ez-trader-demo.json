@@ -1,0 +1,1018 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-10-19T01:45:28.283Z",
+  "__export_source": "ez-trader.demo",
+  "resources": [
+    {
+      "_id": "wrk_eztrader_demo",
+      "_type": "workspace",
+      "parentId": null,
+      "name": "EZ Trader API Demo",
+      "description": "Requests for the EZ Trader API demo. Run the folders in order. Auth is the httpOnly ez_token cookie, which Insomnia stores and resends automatically.",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_eztrader_base",
+      "_type": "environment",
+      "parentId": "wrk_eztrader_demo",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:4000/api"
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url"
+        ]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 0
+    },
+    {
+      "_id": "jar_eztrader",
+      "_type": "cookie_jar",
+      "parentId": "wrk_eztrader_demo",
+      "name": "Default Jar",
+      "cookies": []
+    },
+    {
+      "_id": "fld_eztrader_0",
+      "_type": "request_group",
+      "parentId": "wrk_eztrader_demo",
+      "name": "0 · Start here",
+      "description": "Run `npm run db:reset`, then `npm run dev:server` with `PRICE_TICK_CRON=*/10 * * * * *` in .env. Keep the server terminal on screen: it logs every price tick.",
+      "environment": {},
+      "metaSortKey": 0
+    },
+    {
+      "_id": "req_eztrader_0_0",
+      "_type": "request",
+      "parentId": "fld_eztrader_0",
+      "name": "Health check",
+      "method": "GET",
+      "url": "{{ _.base_url }}/health",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200. API is up and connected to MySQL.",
+      "metaSortKey": 0,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_0_1",
+      "_type": "request",
+      "parentId": "fld_eztrader_0",
+      "name": "Market status",
+      "method": "GET",
+      "url": "{{ _.base_url }}/market/status",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200. Public. Shows isOpen, opensAt/closesAt (UTC) and the reason when closed.",
+      "metaSortKey": 1,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_eztrader_1",
+      "_type": "request_group",
+      "parentId": "wrk_eztrader_demo",
+      "name": "1 · Admin: open the market & list a stock",
+      "description": "Logging in stores the httpOnly `ez_token` cookie in the Insomnia cookie jar (Cookies button). Every later request sends it automatically.",
+      "environment": {},
+      "metaSortKey": 100
+    },
+    {
+      "_id": "req_eztrader_1_0",
+      "_type": "request",
+      "parentId": "fld_eztrader_1",
+      "name": "Log in as admin",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin123!\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 0,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_1_1",
+      "_type": "request",
+      "parentId": "fld_eztrader_1",
+      "name": "Who am I",
+      "method": "GET",
+      "url": "{{ _.base_url }}/auth/me",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200. No password_hash in the response.",
+      "metaSortKey": 1,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_1_2",
+      "_type": "request",
+      "parentId": "fld_eztrader_1",
+      "name": "Open market: hours 00:00–23:59",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/admin/market/hours",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"openingTime\": \"00:00\",\n  \"closingTime\": \"23:59\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 2,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_1_3",
+      "_type": "request",
+      "parentId": "fld_eztrader_1",
+      "name": "Open market: all seven days",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/admin/market/schedule",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"tradingDays\": [\n    \"SUN\",\n    \"MON\",\n    \"TUE\",\n    \"WED\",\n    \"THU\",\n    \"FRI\",\n    \"SAT\"\n  ],\n  \"holidays\": []\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 3,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_1_4",
+      "_type": "request",
+      "parentId": "fld_eztrader_1",
+      "name": "Market settings",
+      "method": "GET",
+      "url": "{{ _.base_url }}/admin/market",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 4,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_1_5",
+      "_type": "request",
+      "parentId": "fld_eztrader_1",
+      "name": "Market status (now open)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/market/status",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200. Within ~10 s the terminal starts logging \"[prices] tick: updated N stocks\".",
+      "metaSortKey": 5,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_1_6",
+      "_type": "request",
+      "parentId": "fld_eztrader_1",
+      "name": "Create stock NFLX",
+      "method": "POST",
+      "url": "{{ _.base_url }}/admin/stocks",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"ticker\": \"NFLX\",\n  \"companyName\": \"Netflix, Inc.\",\n  \"totalVolume\": 428000000,\n  \"initialPrice\": \"1215.40\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 201. marketCap is computed (totalVolume × currentPrice), not stored.",
+      "metaSortKey": 6,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_1_7",
+      "_type": "request",
+      "parentId": "fld_eztrader_1",
+      "name": "Create NFLX again → 409 duplicate",
+      "method": "POST",
+      "url": "{{ _.base_url }}/admin/stocks",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"ticker\": \"nflx\",\n  \"companyName\": \"Copycat\",\n  \"totalVolume\": 1,\n  \"initialPrice\": \"1.00\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 409.",
+      "metaSortKey": 7,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_1_8",
+      "_type": "request",
+      "parentId": "fld_eztrader_1",
+      "name": "List stocks (admin)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/admin/stocks",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 8,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_eztrader_2",
+      "_type": "request_group",
+      "parentId": "wrk_eztrader_demo",
+      "name": "2 · Watch the price generator",
+      "description": "Re-send these every ~10 seconds while the market is open: currentPrice drifts by at most ±2% per tick, dailyHigh/dailyLow widen, and history grows by one point per tick.",
+      "environment": {},
+      "metaSortKey": 200
+    },
+    {
+      "_id": "req_eztrader_2_0",
+      "_type": "request",
+      "parentId": "fld_eztrader_2",
+      "name": "All stocks",
+      "method": "GET",
+      "url": "{{ _.base_url }}/stocks",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 0,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_2_1",
+      "_type": "request",
+      "parentId": "fld_eztrader_2",
+      "name": "AAPL detail",
+      "method": "GET",
+      "url": "{{ _.base_url }}/stocks/AAPL",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 1,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_2_2",
+      "_type": "request",
+      "parentId": "fld_eztrader_2",
+      "name": "AAPL latest 5 ticks",
+      "method": "GET",
+      "url": "{{ _.base_url }}/stocks/AAPL/history?limit=5",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 2,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_eztrader_3",
+      "_type": "request_group",
+      "parentId": "wrk_eztrader_demo",
+      "name": "3 · Customer: register → deposit → buy → sell → withdraw",
+      "description": "Registering creates the user and cash account in one database transaction and logs you in as that customer.",
+      "environment": {},
+      "metaSortKey": 300
+    },
+    {
+      "_id": "req_eztrader_3_0",
+      "_type": "request",
+      "parentId": "fld_eztrader_3",
+      "name": "Register demo1",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/register",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"firstName\": \"Demo\",\n  \"lastName\": \"Trader\",\n  \"username\": \"demo1\",\n  \"email\": \"demo1@example.com\",\n  \"password\": \"Password123!\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 201. Returns 409 USERNAME_TAKEN if you already ran it; run npm run db:reset between takes.",
+      "metaSortKey": 0,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_3_1",
+      "_type": "request",
+      "parentId": "fld_eztrader_3",
+      "name": "Deposit $10,000.00",
+      "method": "POST",
+      "url": "{{ _.base_url }}/cash/deposit",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"amount\": \"10000.00\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 201.",
+      "metaSortKey": 1,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_3_2",
+      "_type": "request",
+      "parentId": "fld_eztrader_3",
+      "name": "Cash balance",
+      "method": "GET",
+      "url": "{{ _.base_url }}/cash",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 2,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_3_3",
+      "_type": "request",
+      "parentId": "fld_eztrader_3",
+      "name": "Buy 10 AAPL",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"ticker\": \"AAPL\",\n  \"orderType\": \"BUY\",\n  \"quantity\": 10\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 201. Fills at the current price; cash, holding, order and transaction rows change together.",
+      "metaSortKey": 3,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_3_4",
+      "_type": "request",
+      "parentId": "fld_eztrader_3",
+      "name": "Portfolio",
+      "method": "GET",
+      "url": "{{ _.base_url }}/portfolio",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 4,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_3_5",
+      "_type": "request",
+      "parentId": "fld_eztrader_3",
+      "name": "Sell 4 AAPL",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"ticker\": \"AAPL\",\n  \"orderType\": \"SELL\",\n  \"quantity\": 4\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 201.",
+      "metaSortKey": 5,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_3_6",
+      "_type": "request",
+      "parentId": "fld_eztrader_3",
+      "name": "Withdraw $1,000.00",
+      "method": "POST",
+      "url": "{{ _.base_url }}/cash/withdraw",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"amount\": \"1000.00\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 201.",
+      "metaSortKey": 6,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_3_7",
+      "_type": "request",
+      "parentId": "fld_eztrader_3",
+      "name": "My orders",
+      "method": "GET",
+      "url": "{{ _.base_url }}/orders",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 7,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_3_8",
+      "_type": "request",
+      "parentId": "fld_eztrader_3",
+      "name": "My filled orders",
+      "method": "GET",
+      "url": "{{ _.base_url }}/orders?status=FILLED",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 8,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_3_9",
+      "_type": "request",
+      "parentId": "fld_eztrader_3",
+      "name": "My transactions",
+      "method": "GET",
+      "url": "{{ _.base_url }}/transactions",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 9,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_eztrader_4",
+      "_type": "request_group",
+      "parentId": "wrk_eztrader_demo",
+      "name": "4 · Rejections",
+      "description": "Run right after folder 3 (still logged in as demo1). Each one is rejected server-side and writes nothing.",
+      "environment": {},
+      "metaSortKey": 400
+    },
+    {
+      "_id": "req_eztrader_4_0",
+      "_type": "request",
+      "parentId": "fld_eztrader_4",
+      "name": "Buy 1000 META → 422 insufficient funds",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"ticker\": \"META\",\n  \"orderType\": \"BUY\",\n  \"quantity\": 1000\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 422.",
+      "metaSortKey": 0,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_4_1",
+      "_type": "request",
+      "parentId": "fld_eztrader_4",
+      "name": "Sell 999 AAPL → 422 more than owned",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"ticker\": \"AAPL\",\n  \"orderType\": \"SELL\",\n  \"quantity\": 999\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 422.",
+      "metaSortKey": 1,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_4_2",
+      "_type": "request",
+      "parentId": "fld_eztrader_4",
+      "name": "Withdraw $999,999 → 422 over balance",
+      "method": "POST",
+      "url": "{{ _.base_url }}/cash/withdraw",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"amount\": \"999999.00\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 422.",
+      "metaSortKey": 2,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_4_3",
+      "_type": "request",
+      "parentId": "fld_eztrader_4",
+      "name": "Bad input → 400 validation",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"ticker\": \"AAPL\",\n  \"orderType\": \"HOLD\",\n  \"quantity\": 1.5\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 400.",
+      "metaSortKey": 3,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_4_4",
+      "_type": "request",
+      "parentId": "fld_eztrader_4",
+      "name": "Customer calls admin route → 403",
+      "method": "GET",
+      "url": "{{ _.base_url }}/admin/stocks",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 403.",
+      "metaSortKey": 4,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_4_5",
+      "_type": "request",
+      "parentId": "fld_eztrader_4",
+      "name": "Log in as jdoe",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"jdoe\",\n  \"password\": \"Password123!\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 5,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_4_6",
+      "_type": "request",
+      "parentId": "fld_eztrader_4",
+      "name": "Cancel FILLED order #1 → 409",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/orders/1",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 409. Order #1 is a filled seed order owned by jdoe.",
+      "metaSortKey": 6,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_4_7",
+      "_type": "request",
+      "parentId": "fld_eztrader_4",
+      "name": "Log out",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/logout",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 7,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_4_8",
+      "_type": "request",
+      "parentId": "fld_eztrader_4",
+      "name": "Portfolio after logout → 401",
+      "method": "GET",
+      "url": "{{ _.base_url }}/portfolio",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 401.",
+      "metaSortKey": 8,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_4_9",
+      "_type": "request",
+      "parentId": "fld_eztrader_4",
+      "name": "Wrong password → 401",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"jdoe\",\n  \"password\": \"wrong-password\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 401.",
+      "metaSortKey": 9,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_eztrader_5",
+      "_type": "request_group",
+      "parentId": "wrk_eztrader_demo",
+      "name": "5 · Market closed",
+      "description": "Closing works at any time of day because it removes every trading day. Watch the terminal switch to \"[prices] skipping tick\".",
+      "environment": {},
+      "metaSortKey": 500
+    },
+    {
+      "_id": "req_eztrader_5_0",
+      "_type": "request",
+      "parentId": "fld_eztrader_5",
+      "name": "Log in as admin",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin123!\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 0,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_5_1",
+      "_type": "request",
+      "parentId": "fld_eztrader_5",
+      "name": "Close market: no trading days",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/admin/market/schedule",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"tradingDays\": [],\n  \"holidays\": []\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 1,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_5_2",
+      "_type": "request",
+      "parentId": "fld_eztrader_5",
+      "name": "Market status (closed)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/market/status",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 2,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_5_3",
+      "_type": "request",
+      "parentId": "fld_eztrader_5",
+      "name": "Log in as jdoe",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"jdoe\",\n  \"password\": \"Password123!\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 3,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_5_4",
+      "_type": "request",
+      "parentId": "fld_eztrader_5",
+      "name": "Buy while closed → 409",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"ticker\": \"AAPL\",\n  \"orderType\": \"BUY\",\n  \"quantity\": 1\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 409.",
+      "metaSortKey": 4,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "fld_eztrader_6",
+      "_type": "request_group",
+      "parentId": "wrk_eztrader_demo",
+      "name": "6 · Restore normal schedule",
+      "description": "Back to weekdays 09:30–16:00 CT with Thanksgiving closed. `npm run db:reset` also restores everything.",
+      "environment": {},
+      "metaSortKey": 600
+    },
+    {
+      "_id": "req_eztrader_6_0",
+      "_type": "request",
+      "parentId": "fld_eztrader_6",
+      "name": "Log in as admin",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin123!\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 0,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_6_1",
+      "_type": "request",
+      "parentId": "fld_eztrader_6",
+      "name": "Hours 09:30–16:00",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/admin/market/hours",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"openingTime\": \"09:30\",\n  \"closingTime\": \"16:00\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 1,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_6_2",
+      "_type": "request",
+      "parentId": "fld_eztrader_6",
+      "name": "Mon–Fri + Thanksgiving",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/admin/market/schedule",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"tradingDays\": [\n    \"MON\",\n    \"TUE\",\n    \"WED\",\n    \"THU\",\n    \"FRI\"\n  ],\n  \"holidays\": [\n    {\n      \"date\": \"2026-11-26\",\n      \"name\": \"Thanksgiving Day\"\n    }\n  ]\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200. If Nov 26, 2026 has passed, the API rejects it as a past holiday; remove it from the body.",
+      "metaSortKey": 2,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_eztrader_6_3",
+      "_type": "request",
+      "parentId": "fld_eztrader_6",
+      "name": "Market status",
+      "method": "GET",
+      "url": "{{ _.base_url }}/market/status",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "description": "Expected: HTTP 200.",
+      "metaSortKey": 3,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingFollowRedirects": "global"
+    }
+  ]
+}

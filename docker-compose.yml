@@ -1,0 +1,24 @@
+# Optional: a MySQL 8 container for teammates who don't have MySQL installed natively.
+# Credentials match .env.example. Start with `npm run db:up`.
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ez_trader_mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ez_trader
+      MYSQL_USER: ez_trader
+      MYSQL_PASSWORD: change_me
+      MYSQL_ROOT_PASSWORD: change_me_root
+    volumes:
+      - ez_trader_mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uez_trader", "-pchange_me"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  ez_trader_mysql:
